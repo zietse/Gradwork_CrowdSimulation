@@ -20,9 +20,7 @@ public class Crowd : MonoBehaviour
         {
             for(int i=0;i<_amountOfAgentsOnPoint;i++)
             { 
-                var tempObject = Instantiate(_agentPrefab, spawnpoint);
-                tempObject.GetComponent<Agent>().TargetPosition = _targetPositions[Random.Range(0,_targetPositions.Length)];
-                _crowd.Add(tempObject);
+               
             }
         }
     }

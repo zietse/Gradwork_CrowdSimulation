@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class Agent : MonoBehaviour
 {
-    private Transform _targetPosition;
-    public Transform TargetPosition
-    {
-        get { return _targetPosition; }
-        set { _targetPosition = value; }
-    }
-    NavMeshAgent agent;
-
+    Collider _agentCollider;
+    public Collider AgentCollider { get { return _agentCollider; } }
 
     private void Start()
     {
-        agent = this.GetComponent<NavMeshAgent>();
-        agent.SetDestination(_targetPosition.position);
+        _agentCollider = GetComponent<Collider>();
     }
+    
+    public void Move(Vector2 velocity)
+    {
+        var navmeshAgent = GetComponent<NavMeshAgent>();
+        //navmeshAgent.velocity = velocity;
+        navmeshAgent.velocity = velocity;
+    }
+
 }
