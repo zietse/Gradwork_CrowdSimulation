@@ -13,7 +13,8 @@ public class AlignmentBehavior : FlockBehavior
         Vector2 alignmentMove = Vector2.zero;
         foreach (Transform neighbour in neighbours)
         {
-            alignmentMove += (Vector2)neighbour.transform.forward;
+            alignmentMove.x += neighbour.transform.up.x;
+            alignmentMove.y += neighbour.transform.up.z;
         }
 
         alignmentMove /= neighbours.Count;

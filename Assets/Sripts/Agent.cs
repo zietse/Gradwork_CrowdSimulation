@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(NavMeshAgent))]
 public class Agent : MonoBehaviour
 {
     Collider _agentCollider;
@@ -17,9 +16,11 @@ public class Agent : MonoBehaviour
     
     public void Move(Vector2 velocity)
     {
-        var navmeshAgent = GetComponent<NavMeshAgent>();
-        //navmeshAgent.velocity = velocity;
-        navmeshAgent.velocity = velocity;
+        transform.forward = velocity;
+
+        //this still needs to be replaced with the implementation of the navmeshAgent !!
+        transform.rotation = Quaternion.identity;
+        transform.Translate(new Vector3(velocity.x,0,velocity.y) * Time.deltaTime);
     }
 
 }

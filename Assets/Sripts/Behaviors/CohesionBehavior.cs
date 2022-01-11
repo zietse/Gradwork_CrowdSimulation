@@ -13,13 +13,15 @@ public class CohesionBehavior : FlockBehavior
         Vector2 cohesionMove = Vector2.zero;
         foreach(Transform neighbour in neighbours)
         {
-            cohesionMove += (Vector2)neighbour.position;
+            cohesionMove.x += neighbour.position.x;
+            cohesionMove.y += neighbour.position.z;
         }
 
         cohesionMove /= neighbours.Count;
 
         //take offset from agents position
-        cohesionMove -= (Vector2)agent.transform.position;
+        cohesionMove.x -= agent.transform.position.x;
+        cohesionMove.y -= agent.transform.position.z;
 
         return cohesionMove;
     }

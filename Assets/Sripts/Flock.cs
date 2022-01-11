@@ -12,7 +12,10 @@ public class Flock : MonoBehaviour
     private FlockBehavior _behavior;
 
     [Range(10, 200)]
-    private int startingCount = 250;
+    public int startingCount = 250;
+
+    [SerializeField]
+    private float flockDensity = 0.08f;
 
     [SerializeField]
     List<Transform> _flockSpawnPoints = new List<Transform>();
@@ -40,12 +43,9 @@ public class Flock : MonoBehaviour
 
         for(int i=0;i<startingCount;i++)
         {
-            Vector3 tempPos = _flockSpawnPoints[Random.Range(0, _flockSpawnPoints.Count)].position;
+            Vector2 randomPos = Random.insideUnitCircle * startingCount * flockDensity;
 
-            tempPos.x  += Random.Range(-0.25f * i, 0.25f * i);
-            tempPos.z += Random.Range(-0.25f * i, 0.25f * i);
-
-            Agent newAgent = Instantiate(_agentPrefab, tempPos,Quaternion.identity);
+            Agent newAgent = Instantiate(_agentPrefab,new Vector3(randomPos.x,1.5f,randomPos.y),Quaternion.Euler(Vector3.up * Random.Range(0f,360f)),transform);
             newAgent.name = "Agent" + i;
             _agents.Add(newAgent);
         }

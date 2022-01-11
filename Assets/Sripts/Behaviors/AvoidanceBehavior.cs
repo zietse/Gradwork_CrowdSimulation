@@ -18,7 +18,8 @@ public class AvoidanceBehavior : FlockBehavior
             if(Vector2.SqrMagnitude(neighbour.position - agent.transform.position) < flock.SquareAvoidanceRadius)
             {
                 nAvoid++;
-                avoidanceMove += (Vector2)(agent.transform.position - neighbour.position);
+                avoidanceMove.x += (agent.transform.position.x - neighbour.position.x);
+                avoidanceMove.y += (agent.transform.position.z - neighbour.position.z);
             }
         }
 
