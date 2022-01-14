@@ -72,7 +72,7 @@ public class Flock : MonoBehaviour
     {
         List<Transform> context = new List<Transform>();
 
-        Collider[] contextColliders = Physics.OverlapSphere(agent.transform.position, _neighborRadius);
+        Collider[] contextColliders = Physics.OverlapSphere(agent.transform.position, _neighborRadius); //for calculating neighbors just use distance
         foreach(Collider c in contextColliders)
         {
             if(c != agent.AgentCollider)

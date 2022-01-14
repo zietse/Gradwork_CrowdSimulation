@@ -967,6 +967,8 @@ MonoBehaviour:
   _agentPrefab: {fileID: 6495250234902614315, guid: 641cbebf35ba0e849ac0b957d533d229,
     type: 3}
   _behavior: {fileID: 11400000, guid: 69e3b75aba975e943a61ae7350c15c79, type: 2}
+  startingCount: 250
+  flockDensity: 0.08
   _flockSpawnPoints:
   - {fileID: 355883794}
   - {fileID: 638271430}
@@ -975,4 +977,4 @@ MonoBehaviour:
   _impactFactor: 10
   _maxSpeed: 5
   _neighborRadius: 0.8
-  _avoidanceRadiusMultiplier: 0.16
+  _avoidanceRadiusMultiplier: 0.095
