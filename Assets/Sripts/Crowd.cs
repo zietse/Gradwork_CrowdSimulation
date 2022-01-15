@@ -29,6 +29,7 @@ public class Crowd : MonoBehaviour
 
  
     private List<Transform> _availableWaypoints = new List<Transform>();
+    private List<Transform> _availableRegisters = new List<Transform>();
     private List<GameObject> _crowd = new List<GameObject>();
     // Start is called before the first frame update
     void Start()
@@ -39,14 +40,21 @@ public class Crowd : MonoBehaviour
         //first scan for all waypoints in the scene
         GameObject[] waypoints = GameObject.FindGameObjectsWithTag("Waypoint");
 
+        //scan for all available registers
+        GameObject[] registers = GameObject.FindGameObjectsWithTag("RegisterWaypoint");
+
         foreach (GameObject waypoint in waypoints) //fill it with all the waypoints found in the scene
             _availableWaypoints.Add(waypoint.transform);
+
+        foreach (GameObject register in registers) //fill list with all available registers
+            _availableRegisters.Add(register.transform);
 
     }
     void SpawnAgent()
     {
         GameObject tempAgent = Instantiate(_agentPrefab, _spawnPoints[Random.Range(0, _spawnPoints.Length)].position, Quaternion.identity);
         tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder();
+        tempAgent.GetComponent<Agent>().RegisterTravelPoints = _availableRegisters;
         tempAgent.GetComponent<Agent>().PositionReachedDelay = Random.Range(_minWaitInterval, _maxWaitInterval); //randomize how long agent needs to wait after reaching a waypoint
         
         Agent.EmotionalSpecifiers tempSpecifiers;

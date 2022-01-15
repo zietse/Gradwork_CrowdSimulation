@@ -19,10 +19,14 @@ public class Agent : MonoBehaviour
     int _currentTravelPointIndex=0;
     float _positionReachedDelay = 0f;
     float _currentReachedDelay = 0f;
+    float _remainingDistanceOffset = 1.0f;
+
+    bool _isGoingToCheckout = false;
 
     private EmotionalSpecifiers _emotionalVariables;
 
     private List<Transform> _orderOfTravelPoints = new List<Transform>();
+    private List<Transform> _registerTravelPoints = new List<Transform>();
     public Collider AgentCollider { get { return _agentCollider; } }
     public float PositionReachedDelay { get { return _positionReachedDelay; } set { _positionReachedDelay = value; } }
     public EmotionalSpecifiers EmotionalVariables { get { return _emotionalVariables; } set { _emotionalVariables = value; } }
@@ -33,6 +37,7 @@ public class Agent : MonoBehaviour
             SetAgentDestination(_orderOfTravelPoints[_currentTravelPointIndex].position);
         } 
     }
+    public List<Transform> RegisterTravelPoints { get { return _registerTravelPoints; } set { _registerTravelPoints = value; } }
 
 
     private void Start()
@@ -41,6 +46,7 @@ public class Agent : MonoBehaviour
         _movesManually = true;
         _currentReachedDelay = _positionReachedDelay;
         GetComponent<NavMeshAgent>().radius = _emotionalVariables.Introvertness;
+        //GetComponent<NavMeshAgent>().speed = 30; //adjust the speed here
     }
     public void MoveToPoint(Vector3 destination)
     {
@@ -65,18 +71,31 @@ public class Agent : MonoBehaviour
         if(!_agent)
             _agent = GetComponent<NavMeshAgent>();
 
-        if(_agent.remainingDistance <= 2f)
+        if(_agent.remainingDistance <= _remainingDistanceOffset)
         {
             if (_currentReachedDelay <= 0f)
             {
-                //Update agent path to travel
-                Debug.LogWarning("Reached Waypoint");
-                _currentTravelPointIndex++;
-                _currentReachedDelay = _positionReachedDelay; //reset delay timer
-                SetAgentDestination(_orderOfTravelPoints[_currentTravelPointIndex].position);
+                if(_currentTravelPointIndex+1 == _orderOfTravelPoints.Count-1) //customer reached the end of the list needs to go to checkout
+                {
+                    Debug.LogWarning("Customer has finished shoping");
+                    SetAgentDestination(_registerTravelPoints[Random.Range(0, _registerTravelPoints.Count)].position); //set the agent checkout to a random position
+                    _isGoingToCheckout = true;
+                }
+                else
+                {
+                    //Update agent path to travel
+                    Debug.LogWarning("Reached Waypoint");
+                    _currentTravelPointIndex++;
+                    _currentReachedDelay = _positionReachedDelay; //reset delay timer
+                    SetAgentDestination(_orderOfTravelPoints[_currentTravelPointIndex].position);
+                }
             }
             else
                 _currentReachedDelay -= Time.deltaTime;
+        }
+        if(_agent.remainingDistance <= _remainingDistanceOffset && _isGoingToCheckout) //agent reached register point so delete itself
+        {
+            Destroy(this);
         }
     }
 }
