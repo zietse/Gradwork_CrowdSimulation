@@ -23,9 +23,15 @@ public class Crowd : MonoBehaviour
 
     //Emotional Variables
     [SerializeField]
-    private float _minIntrovertnessFactor;
+    private float _minExtraversionFactor;
     [SerializeField]
-    private float _maxIntrovertnessFactor;
+    private float _maxExtraversionFactor;
+
+    [SerializeField]
+    private int _traversePointCap;
+
+    [SerializeField]
+    private float _neighbourDetectionRadius;
 
  
     private List<Transform> _availableWaypoints = new List<Transform>();
@@ -56,10 +62,9 @@ public class Crowd : MonoBehaviour
         tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder();
         tempAgent.GetComponent<Agent>().RegisterTravelPoints = _availableRegisters;
         tempAgent.GetComponent<Agent>().PositionReachedDelay = Random.Range(_minWaitInterval, _maxWaitInterval); //randomize how long agent needs to wait after reaching a waypoint
-        
-        Agent.EmotionalSpecifiers tempSpecifiers;
-        tempSpecifiers.Introvertness = Random.Range(_minIntrovertnessFactor, _maxIntrovertnessFactor);
-        tempSpecifiers.Hurrieness = Random.Range(_minIntrovertnessFactor, _maxIntrovertnessFactor);
+
+        Agent.EmotionalSpecifiers tempSpecifiers = new Agent.EmotionalSpecifiers();
+        tempSpecifiers.Extraversion = Random.Range(_minExtraversionFactor, _maxExtraversionFactor);
         tempAgent.GetComponent<Agent>().EmotionalVariables = tempSpecifiers; //randomize the introvertness factor for now
         
         _crowd.Add(tempAgent);
@@ -77,16 +82,60 @@ public class Crowd : MonoBehaviour
             returnList[rand2] = tempTransform;
         }
 
+        if(returnList.Count > _traversePointCap) //cap the amount of waypoints the agent needs to traverse so we can control the test data
+        {
+            returnList = returnList.GetRange(0,_traversePointCap+1);
+        }
+
         return returnList;
     }
     // Update is called once per frame
     void Update()
     {
+        CleanupCrowd();
+
         _currentSpawnInterval -= Time.deltaTime;
         if(_currentSpawnInterval <= 0f)
         {
             SpawnAgent();
             _currentSpawnInterval = _newAgentSpawnInterval;
         }
+
+        //UpdateAgentsNeighbors();
     }
+
+    void UpdateAgentsNeighbors()
+    {
+        //loop over all agents to check for neighbours
+        for (int i = 0; i < _crowd.Count; i++)
+        {
+            for (int j = 0; j < _crowd.Count; j++)
+            {
+                if (Vector2.Distance(_crowd[i].transform.position, _crowd[j].transform.position) < _neighbourDetectionRadius) //agent is in range add to neighbors
+                {
+                    _crowd[i].GetComponent<Agent>().Neighbors.Add(_crowd[j]);
+                    //Debug.LogWarning("Added neighbor for agent - " + i);
+                }
+                else
+                {
+                    if(_crowd.Contains(_crowd[j])) //this part f the code might not be that performant ??
+                    {
+                        _crowd[i].GetComponent<Agent>().Neighbors.Remove(_crowd[j]);
+                        //Debug.LogWarning("Removed neighbor for agent - " + i);
+                    }
+                }
+            }
+
+        }
+    }
+
+    void CleanupCrowd()
+    {
+        for(int i=0;i<_crowd.Count;i++)
+        {
+            if (_crowd[i] == null)
+                _crowd.RemoveAt(i);
+        }
+    }
+
 }
