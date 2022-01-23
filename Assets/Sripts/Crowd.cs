@@ -8,7 +8,7 @@ public class Crowd : MonoBehaviour
     [SerializeField]
     Transform[] _spawnPoints;
     [SerializeField]
-    GameObject _agentPrefab;
+    GameObject[] _agentPrefabs;
     [SerializeField]
     int _amountOfAgentsOnPoint;
 
@@ -58,7 +58,7 @@ public class Crowd : MonoBehaviour
     }
     void SpawnAgent()
     {
-        GameObject tempAgent = Instantiate(_agentPrefab, _spawnPoints[Random.Range(0, _spawnPoints.Length)].position, Quaternion.identity);
+        GameObject tempAgent = Instantiate(_agentPrefabs[Random.Range(0, _agentPrefabs.Length)], _spawnPoints[Random.Range(0, _spawnPoints.Length)].position, Quaternion.identity);
         tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder();
         tempAgent.GetComponent<Agent>().RegisterTravelPoints = _availableRegisters;
         tempAgent.GetComponent<Agent>().PositionReachedDelay = Random.Range(_minWaitInterval, _maxWaitInterval); //randomize how long agent needs to wait after reaching a waypoint

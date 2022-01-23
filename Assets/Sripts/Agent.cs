@@ -9,7 +9,7 @@ public class Agent : MonoBehaviour
 {
     public struct EmotionalSpecifiers
     {
-        public float Extraversion; //low value is people that don't like to be near other people, high people is vey social people
+        public float Extraversion; //low value is people that don't like to be near other people, high value is vey social people
         public float Openness; //low is people that don't like change, don't enjoy new things, high is creative and focussed on tackling new challenges
         public float Conscientiosness; //low is people that dislike structure, make messes, fails to complete tasks, high is people that finish important tasks right away and spend time preparing.
         public float Agreeableness; //low is people that are more competitive and sometimes manipulative, high in this is people that are sometimes manipulative but mostly care about others and feel empathy
@@ -24,6 +24,9 @@ public class Agent : MonoBehaviour
     float _currentReachedDelay = 0f;
     float _remainingDistanceOffset = 1.0f;
     bool _isGoingToCheckout = false;
+
+    //Animator
+    Animator _animController;
 
     //Timer
     private float _totalTraverseTimer = 0f;
@@ -51,10 +54,14 @@ public class Agent : MonoBehaviour
     {
         _agentCollider = GetComponent<Collider>();
         _movesManually = true;
+        _animController = GetComponent<Animator>();
         _currentReachedDelay = _positionReachedDelay;
         GetComponent<NavMeshAgent>().radius =  _emotionalVariables.Extraversion;
         GetComponent<NavMeshAgent>().obstacleAvoidanceType = ObstacleAvoidanceType.GoodQualityObstacleAvoidance;
         //GetComponent<NavMeshAgent>().speed = 30; //adjust the speed here
+
+        //trigger walking animation
+        _animController.SetBool("IsMoving", true);
     }
     public void MoveToPoint(Vector3 destination)
     {
@@ -81,6 +88,11 @@ public class Agent : MonoBehaviour
 
         _totalTraverseTimer += Time.deltaTime;
 
+        if (_agent.velocity.magnitude > 0f) //agent is moving
+            _animController.SetBool("IsMoving", true);
+        else
+            _animController.SetBool("IsMoving", false);
+
         if (_agent.remainingDistance <= _remainingDistanceOffset && _isGoingToCheckout) //agent reached register point so delete itself
         {
             //print total time to console - later print this maybe to a file while doing the actual sim
@@ -92,7 +104,8 @@ public class Agent : MonoBehaviour
         {
             if (_currentReachedDelay <= 0f)
             {
-                if(_currentTravelPointIndex+1 == _orderOfTravelPoints.Count-1) //customer reached the end of the list needs to go to checkout
+
+                if (_currentTravelPointIndex+1 == _orderOfTravelPoints.Count-1) //customer reached the end of the list needs to go to checkout
                 {
                     Debug.LogWarning("Customer has finished shoping");
                     SetAgentDestination(_registerTravelPoints[Random.Range(0, _registerTravelPoints.Count)].position); //set the agent checkout to a random position
@@ -104,11 +117,14 @@ public class Agent : MonoBehaviour
                     Debug.LogWarning("Reached Waypoint");
                     _currentTravelPointIndex++;
                     _currentReachedDelay = _positionReachedDelay; //reset delay timer
+
                     SetAgentDestination(_orderOfTravelPoints[_currentTravelPointIndex].position);
                 }
             }
             else
+            {
                 _currentReachedDelay -= Time.deltaTime;
+            }
         }
        
     }
