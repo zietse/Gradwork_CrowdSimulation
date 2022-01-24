@@ -33657,11 +33657,9 @@ MonoBehaviour:
   - {fileID: 8204197113244524383, guid: 04e285670b9a8484da5803041aa99bae, type: 3}
   - {fileID: 529965302129353053, guid: cc97504b9e0acf544a2e52a1a0a98a46, type: 3}
   _amountOfAgentsOnPoint: 1
-  _newAgentSpawnInterval: 1.1
+  _newAgentSpawnInterval: 1.34
   _minWaitInterval: 2
   _maxWaitInterval: 6
-  _minExtraversionFactor: 0.5
-  _maxExtraversionFactor: 1
   _traversePointCap: 2
   _neighbourDetectionRadius: 1
 --- !u!43 &1609073067

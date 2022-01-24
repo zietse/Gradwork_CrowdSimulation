@@ -2318,10 +2318,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8831833068853118437}
+  - component: {fileID: 2621657302729545702}
+  - component: {fileID: 5109700494438411363}
   - component: {fileID: 3202294315236990879}
   - component: {fileID: -3585139767699995786}
   - component: {fileID: 8800410462214713558}
-  - component: {fileID: 2621657302729545702}
+  - component: {fileID: 940899995400617920}
   m_Layer: 0
   m_Name: Pedestrian1
   m_TagString: Untagged
@@ -2350,6 +2352,35 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2621657302729545702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8204197113244524383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639614c6e98a8a94ea286ebe90f0f2c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5109700494438411363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8204197113244524383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312277603b70ad744a37b007996a3ad6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Extraversion: 0.5
+  Openess: 0
+  Conscientiosness: 0
+  Agreeableness: 0
+  Neuroticism: 0.741
 --- !u!95 &3202294315236990879
 Animator:
   serializedVersion: 3
@@ -2405,18 +2436,22 @@ NavMeshAgent:
   m_BaseOffset: -0.05
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &2621657302729545702
-MonoBehaviour:
+--- !u!208 &940899995400617920
+NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8204197113244524383}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 639614c6e98a8a94ea286ebe90f0f2c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.2, y: 1, z: 0.2}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.8, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &8239903758499362557
 GameObject:
   m_ObjectHideFlags: 0

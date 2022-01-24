@@ -5,19 +5,14 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Traits))]
 public class Agent : MonoBehaviour
 {
-    public struct EmotionalSpecifiers
-    {
-        public float Extraversion; //low value is people that don't like to be near other people, high value is vey social people
-        public float Openness; //low is people that don't like change, don't enjoy new things, high is creative and focussed on tackling new challenges
-        public float Conscientiosness; //low is people that dislike structure, make messes, fails to complete tasks, high is people that finish important tasks right away and spend time preparing.
-        public float Agreeableness; //low is people that are more competitive and sometimes manipulative, high in this is people that are sometimes manipulative but mostly care about others and feel empathy
-        public float Neuroticism; //low is don't worry much, deal well with stress, high is experience a lot of stress, get upset easily,...
-    }
+   
 
     Collider _agentCollider;
     NavMeshAgent _agent;
+    NavMeshObstacle _agentObstacle;
     bool _movesManually;
     int _currentTravelPointIndex=0;
     float _positionReachedDelay = 0f;
@@ -31,15 +26,13 @@ public class Agent : MonoBehaviour
     //Timer
     private float _totalTraverseTimer = 0f;
 
-    //emotional traits specifiers
-    private EmotionalSpecifiers _emotionalVariables;
+    Traits _emotionalTraits;
 
     private List<Transform> _orderOfTravelPoints = new List<Transform>();
     private List<Transform> _registerTravelPoints = new List<Transform>();
     private List<GameObject> _neighbors = new List<GameObject>();
     public Collider AgentCollider { get { return _agentCollider; } }
     public float PositionReachedDelay { get { return _positionReachedDelay; } set { _positionReachedDelay = value; } }
-    public EmotionalSpecifiers EmotionalVariables { get { return _emotionalVariables; } set { _emotionalVariables = value; } }
     public List<Transform> OrderOfTravelPoints { get { return _orderOfTravelPoints; } 
         set 
         { 
@@ -53,15 +46,23 @@ public class Agent : MonoBehaviour
     private void Start()
     {
         _agentCollider = GetComponent<Collider>();
-        _movesManually = true;
         _animController = GetComponent<Animator>();
+        _emotionalTraits = GetComponent<Traits>();
+        _movesManually = true;
         _currentReachedDelay = _positionReachedDelay;
-        GetComponent<NavMeshAgent>().radius =  _emotionalVariables.Extraversion;
+
+        //Set all the direct personal trait impacting factors for the agents
+        GetComponent<NavMeshAgent>().radius = 2f * _emotionalTraits.Extraversion;
+        GetComponent<NavMeshAgent>().speed = 5f * _emotionalTraits.Neuroticism; //adjust the speed here : map around normal speed of 5
+        
+        
         GetComponent<NavMeshAgent>().obstacleAvoidanceType = ObstacleAvoidanceType.GoodQualityObstacleAvoidance;
-        //GetComponent<NavMeshAgent>().speed = 30; //adjust the speed here
+        _agentObstacle = GetComponent<NavMeshObstacle>();
 
         //trigger walking animation
         _animController.SetBool("IsMoving", true);
+
+        _agentObstacle.enabled = false;
     }
     public void MoveToPoint(Vector3 destination)
     {
@@ -80,6 +81,22 @@ public class Agent : MonoBehaviour
             return;
 
         _agent.Move(move * Time.deltaTime);
+    }
+    public void SwitchAgentType(int switchKey) //switch the agent from a NavmeshAgent to a Navmesh obstacle
+    {
+        switch(switchKey)
+        {
+            case 0: //key 0 is from agent to obstacle
+                _agent.isStopped = true;
+                _agent.enabled = false;
+                _agentObstacle.enabled = true;
+                break;
+            case 1:
+                _agent.isStopped = false;
+                _agent.enabled = true;
+                _agentObstacle.enabled = false;
+                break;
+        }
     }
     private void Update()
     {

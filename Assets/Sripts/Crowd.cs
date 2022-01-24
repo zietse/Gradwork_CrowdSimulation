@@ -21,11 +21,6 @@ public class Crowd : MonoBehaviour
     public float _maxWaitInterval;
     private float _currentSpawnInterval;
 
-    //Emotional Variables
-    [SerializeField]
-    private float _minExtraversionFactor;
-    [SerializeField]
-    private float _maxExtraversionFactor;
 
     [SerializeField]
     private int _traversePointCap;
@@ -62,10 +57,6 @@ public class Crowd : MonoBehaviour
         tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder();
         tempAgent.GetComponent<Agent>().RegisterTravelPoints = _availableRegisters;
         tempAgent.GetComponent<Agent>().PositionReachedDelay = Random.Range(_minWaitInterval, _maxWaitInterval); //randomize how long agent needs to wait after reaching a waypoint
-
-        Agent.EmotionalSpecifiers tempSpecifiers = new Agent.EmotionalSpecifiers();
-        tempSpecifiers.Extraversion = Random.Range(_minExtraversionFactor, _maxExtraversionFactor);
-        tempAgent.GetComponent<Agent>().EmotionalVariables = tempSpecifiers; //randomize the introvertness factor for now
         
         _crowd.Add(tempAgent);
     }
