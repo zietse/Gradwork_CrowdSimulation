@@ -2376,7 +2376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 312277603b70ad744a37b007996a3ad6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Extraversion: 0.5
+  Extraversion: 0.239
   Openess: 0
   Conscientiosness: 0
   Agreeableness: 0

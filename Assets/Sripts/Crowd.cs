@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
+using System.IO;
 public class Crowd : MonoBehaviour
 {
     [SerializeField]
@@ -28,6 +28,9 @@ public class Crowd : MonoBehaviour
     [SerializeField]
     private float _neighbourDetectionRadius;
 
+    [SerializeField]
+    private string _dataFileName;
+
  
     private List<Transform> _availableWaypoints = new List<Transform>();
     private List<Transform> _availableRegisters = new List<Transform>();
@@ -50,6 +53,13 @@ public class Crowd : MonoBehaviour
         foreach (GameObject register in registers) //fill list with all available registers
             _availableRegisters.Add(register.transform);
 
+
+        //write title of CSV
+        string path = Application.dataPath + "/Data/" + _dataFileName + ".csv";
+
+        TextWriter tw = new StreamWriter(path, false);
+        tw.WriteLine("Extraversion; Openess; Conscientiosness; Agreeableness; Neuroticism; Traverse Time; #waypoints");
+        tw.Close();
     }
     void SpawnAgent()
     {
@@ -57,7 +67,8 @@ public class Crowd : MonoBehaviour
         tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder();
         tempAgent.GetComponent<Agent>().RegisterTravelPoints = _availableRegisters;
         tempAgent.GetComponent<Agent>().PositionReachedDelay = Random.Range(_minWaitInterval, _maxWaitInterval); //randomize how long agent needs to wait after reaching a waypoint
-        
+        tempAgent.GetComponent<Agent>().DataFileName = _dataFileName;
+
         _crowd.Add(tempAgent);
     }
     List<Transform> GetRandomTraverseOrder()

@@ -13,7 +13,7 @@ using UnityEngine;
 public class Traits : MonoBehaviour
 {
     //emotional traits specifiers
-    [Range(0.5f,1f)] public float Extraversion;
+    [Range(0f,1f)] public float Extraversion;
     [Range(0f,1f)] public float Openess;
     [Range(0f,1f)] public float Conscientiosness;
     [Range(0f,1f)] public float Agreeableness;

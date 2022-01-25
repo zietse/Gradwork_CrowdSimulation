@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,6 +20,7 @@ public class Agent : MonoBehaviour
     float _currentReachedDelay = 0f;
     float _remainingDistanceOffset = 1.0f;
     bool _isGoingToCheckout = false;
+    private string _dataFileName;
 
     //Animator
     Animator _animController;
@@ -32,6 +34,7 @@ public class Agent : MonoBehaviour
     private List<Transform> _registerTravelPoints = new List<Transform>();
     private List<GameObject> _neighbors = new List<GameObject>();
     public Collider AgentCollider { get { return _agentCollider; } }
+    public string DataFileName { get { return _dataFileName; } set { _dataFileName = value; } }
     public float PositionReachedDelay { get { return _positionReachedDelay; } set { _positionReachedDelay = value; } }
     public List<Transform> OrderOfTravelPoints { get { return _orderOfTravelPoints; } 
         set 
@@ -52,7 +55,7 @@ public class Agent : MonoBehaviour
         _currentReachedDelay = _positionReachedDelay;
 
         //Set all the direct personal trait impacting factors for the agents
-        GetComponent<NavMeshAgent>().radius = 2f * _emotionalTraits.Extraversion;
+        GetComponent<NavMeshAgent>().radius = 1f * _emotionalTraits.Extraversion;
         GetComponent<NavMeshAgent>().speed = 5f * _emotionalTraits.Neuroticism; //adjust the speed here : map around normal speed of 5
         
         
@@ -105,17 +108,22 @@ public class Agent : MonoBehaviour
 
         _totalTraverseTimer += Time.deltaTime;
 
-        if (_agent.velocity.magnitude > 0f) //agent is moving
-            _animController.SetBool("IsMoving", true);
-        else
-            _animController.SetBool("IsMoving", false);
-
         if (_agent.remainingDistance <= _remainingDistanceOffset && _isGoingToCheckout) //agent reached register point so delete itself
         {
             //print total time to console - later print this maybe to a file while doing the actual sim
             Debug.LogWarning("Total Time for agent to complete tour: " + _totalTraverseTimer.ToString("0.00") + " s");
+
+            //Print Agent data to file
+            WriteDataToFile(_dataFileName);
+
             Destroy(this.gameObject);
+            return;
         }
+
+        if (_agent.velocity.magnitude > 0f) //agent is moving
+            _animController.SetBool("IsMoving", true);
+        else
+            _animController.SetBool("IsMoving", false);
 
         if (_agent.remainingDistance <= _remainingDistanceOffset)
         {
@@ -143,6 +151,16 @@ public class Agent : MonoBehaviour
                 _currentReachedDelay -= Time.deltaTime;
             }
         }
-       
+    }
+
+    void WriteDataToFile(string fileName)
+    { 
+        string path = Application.dataPath + "/Data/" + fileName + ".csv";
+
+        TextWriter tw = new StreamWriter(path, true);
+        tw.WriteLine(_emotionalTraits.Extraversion.ToString() + ";" + _emotionalTraits.Openess + ";"
+        + _emotionalTraits.Conscientiosness + ";" + _emotionalTraits.Agreeableness + ";" + _emotionalTraits.Neuroticism + ";" + _totalTraverseTimer + ";" + (_orderOfTravelPoints.Count-1));
+        tw.Close();
+
     }
 }
