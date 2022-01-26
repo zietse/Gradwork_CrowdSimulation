@@ -17,9 +17,10 @@ public class Agent : MonoBehaviour
     bool _movesManually;
     int _currentTravelPointIndex=0;
     float _positionReachedDelay = 0f;
+    bool _isAgentOnWaypoint = false;
     float _currentReachedDelay = 0f;
     float _remainingDistanceOffset = 1.0f;
-    bool _isGoingToCheckout = false;
+    private bool _isGoingToCheckout = false;
     private string _dataFileName;
 
     //Animator
@@ -46,6 +47,8 @@ public class Agent : MonoBehaviour
     public List<Transform> RegisterTravelPoints { get { return _registerTravelPoints; } set { _registerTravelPoints = value; } }
     public List<GameObject> Neighbors { get { return _neighbors; } set { _neighbors = value; } }
 
+    public bool IsGoingToCheckout { get { return _isGoingToCheckout; } }
+    public bool IsAgentOnWaypoint { get { return _isAgentOnWaypoint; } }
     private void Start()
     {
         _agentCollider = GetComponent<Collider>();
@@ -85,19 +88,15 @@ public class Agent : MonoBehaviour
 
         _agent.Move(move * Time.deltaTime);
     }
-    public void SwitchAgentType(int switchKey) //switch the agent from a NavmeshAgent to a Navmesh obstacle
+    public void SwitchAgentActive(int switchKey) //switch the agent from a NavmeshAgent to a Navmesh obstacle
     {
         switch(switchKey)
         {
-            case 0: //key 0 is from agent to obstacle
+            case 0: //key 0 is agent is pauzed
                 _agent.isStopped = true;
-                _agent.enabled = false;
-                _agentObstacle.enabled = true;
                 break;
-            case 1:
+            case 1: //agent continues
                 _agent.isStopped = false;
-                _agent.enabled = true;
-                _agentObstacle.enabled = false;
                 break;
         }
     }
@@ -142,12 +141,18 @@ public class Agent : MonoBehaviour
                     Debug.LogWarning("Reached Waypoint");
                     _currentTravelPointIndex++;
                     _currentReachedDelay = _positionReachedDelay; //reset delay timer
-
+                    _isAgentOnWaypoint = false;
+                    
+                    _emotionalTraits.TriggerOpenessCalculation(_currentTravelPointIndex); //trigger openess 
+                    
                     SetAgentDestination(_orderOfTravelPoints[_currentTravelPointIndex].position);
                 }
             }
             else
             {
+                if (_isAgentOnWaypoint == false)
+                    _isAgentOnWaypoint = true;
+                
                 _currentReachedDelay -= Time.deltaTime;
             }
         }

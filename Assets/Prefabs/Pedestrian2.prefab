@@ -223,11 +223,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 312277603b70ad744a37b007996a3ad6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Extraversion: 0.161
-  Openess: 0
-  Conscientiosness: 0
+  Extraversion: 0.29
+  Openess: 0.124
+  Conscientiosness: 0.306
   Agreeableness: 0
-  Neuroticism: 0.486
+  Neuroticism: 0.396
+  _minWaitInterval: 2
+  _maxWaitInterval: 4
 --- !u!95 &6553068249620046237
 Animator:
   serializedVersion: 3

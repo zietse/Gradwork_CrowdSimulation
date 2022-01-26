@@ -66,7 +66,6 @@ public class Crowd : MonoBehaviour
         GameObject tempAgent = Instantiate(_agentPrefabs[Random.Range(0, _agentPrefabs.Length)], _spawnPoints[Random.Range(0, _spawnPoints.Length)].position, Quaternion.identity);
         tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder();
         tempAgent.GetComponent<Agent>().RegisterTravelPoints = _availableRegisters;
-        tempAgent.GetComponent<Agent>().PositionReachedDelay = Random.Range(_minWaitInterval, _maxWaitInterval); //randomize how long agent needs to wait after reaching a waypoint
         tempAgent.GetComponent<Agent>().DataFileName = _dataFileName;
 
         _crowd.Add(tempAgent);
