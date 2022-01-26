@@ -164,7 +164,7 @@ public class Agent : MonoBehaviour
 
         TextWriter tw = new StreamWriter(path, true);
         tw.WriteLine(_emotionalTraits.Extraversion.ToString() + ";" + _emotionalTraits.Openess + ";"
-        + _emotionalTraits.Conscientiosness + ";" + _emotionalTraits.Agreeableness + ";" + _emotionalTraits.Neuroticism + ";" + _totalTraverseTimer + ";" + (_orderOfTravelPoints.Count-1));
+        + _emotionalTraits.Conscientiosness + ";" + _emotionalTraits.Agreeableness + ";" + _emotionalTraits.Neuroticism + ";" + _totalTraverseTimer.ToString("0.00") + ";" + (_orderOfTravelPoints.Count-1));
         tw.Close();
 
     }

@@ -16,9 +16,8 @@ public class Crowd : MonoBehaviour
     //Timers
     [Range(0.0f, 10.0f)]
     public float _newAgentSpawnInterval;
-    [SerializeField]
-    public float _minWaitInterval;
-    public float _maxWaitInterval;
+
+
     private float _currentSpawnInterval;
 
 
@@ -29,7 +28,7 @@ public class Crowd : MonoBehaviour
     private float _neighbourDetectionRadius;
 
     [SerializeField]
-    private string _dataFileName;
+    private string[] _dataFileNames;
 
  
     private List<Transform> _availableWaypoints = new List<Transform>();
@@ -53,20 +52,25 @@ public class Crowd : MonoBehaviour
         foreach (GameObject register in registers) //fill list with all available registers
             _availableRegisters.Add(register.transform);
 
+        //data gets written in order of each agent to compare the data - if I want everything in the same file I type the same filename twice
+        //write title of CSVs
+        for(int i=0;i<_dataFileNames.Length;i++)
+        {
+            string path = Application.dataPath + "/Data/" + _dataFileNames[i] + ".csv";
 
-        //write title of CSV
-        string path = Application.dataPath + "/Data/" + _dataFileName + ".csv";
-
-        TextWriter tw = new StreamWriter(path, false);
-        tw.WriteLine("Extraversion; Openess; Conscientiosness; Agreeableness; Neuroticism; Traverse Time; #waypoints");
-        tw.Close();
+            TextWriter tw = new StreamWriter(path, false);
+            tw.WriteLine("Extraversion; Openess; Conscientiosness; Agreeableness; Neuroticism; Traverse Time; #waypoints");
+            tw.Close();
+        }
     }
     void SpawnAgent()
     {
-        GameObject tempAgent = Instantiate(_agentPrefabs[Random.Range(0, _agentPrefabs.Length)], _spawnPoints[Random.Range(0, _spawnPoints.Length)].position, Quaternion.identity);
+        int randAgentPrefabIndex = Random.Range(0, _agentPrefabs.Length);
+
+        GameObject tempAgent = Instantiate(_agentPrefabs[randAgentPrefabIndex], _spawnPoints[Random.Range(0, _spawnPoints.Length)].position, Quaternion.identity);
         tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder();
         tempAgent.GetComponent<Agent>().RegisterTravelPoints = _availableRegisters;
-        tempAgent.GetComponent<Agent>().DataFileName = _dataFileName;
+        tempAgent.GetComponent<Agent>().DataFileName = _dataFileNames[randAgentPrefabIndex];
 
         _crowd.Add(tempAgent);
     }

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Waypoint : MonoBehaviour
 {
+    [SerializeField]
+    private bool _isoccupied;
+
+    public bool IsOccupied { get; set; }
     // Start is called before the first frame update
     void Start()
     {
