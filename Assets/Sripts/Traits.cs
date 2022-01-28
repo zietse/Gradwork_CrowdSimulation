@@ -11,9 +11,9 @@ public class Traits : MonoBehaviour
 {
     //emotional traits specifiers
     /*Done*/ [Range(0.1f,1f)] public float Extraversion; //Linked with evade radius, how higher the extraversion is thus the lower the radius is and people go closer to each other.
-    /*Done*/[Range(0f,1f)] public float Openess; //random switch order of traversable points
-    /*Done*/[Range(0.1f,1f)] public float Conscientiosness; //Mapped to a functionality that people randomly just stand still inside the store when this is low, when high people have a direct plan and don't just randomly stop
-    [Range(0.1f,1f)] public float Agreeableness; //create extra movement speed when coming across people with also a high agreeableness
+    /*Done*/[Range(0f,1f)] public float Openness; //random switch order of traversable points
+    /*Done*/[Range(0.1f,1f)] public float Conscientiousness; //Mapped to a functionality that people randomly just stand still inside the store when this is low, when high people have a direct plan and don't just randomly stop
+    /*Done*/[Range(0.1f,1f)] public float Agreeableness; //create extra movement speed when coming across people with also a high agreeableness
     /*Done*/ [Range(0.1f,1f)] public float Neuroticism; //linked with movement speed - low people move slower and are less in a hurry and high people almost run.
 
     [SerializeField]
@@ -31,15 +31,15 @@ public class Traits : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _pauzePathTimer = Conscientiosness <= 0.5f ? Random.Range(5f, 10f) : Random.Range(0f, 3f);
+        _pauzePathTimer = Conscientiousness <= 0.5f ? Random.Range(5f, 10f) : Random.Range(0f, 3f);
 
         _pauzePathTimer = Random.Range(_minWaitInterval, _maxWaitInterval); // amount of time agent stands still
-        _pauzeInterval = Random.Range((Conscientiosness * 50), Conscientiosness * 80f); //how lower the conscientiosness value thus the lower the interval between pauzes
+        _pauzeInterval = Random.Range((Conscientiousness * 50), Conscientiousness * 80f); //how lower the conscientiosness value thus the lower the interval between pauzes
         _currentPauzeInterval = _pauzeInterval;
         _currentPauzePathTimer = _pauzePathTimer;
 
         //how long does an agent need to wait after reaching a waypoint
-        GetComponentInParent<Agent>().PositionReachedDelay = Random.Range(_minWaitInterval / (Conscientiosness * 10), _maxWaitInterval / (Conscientiosness * 10)); //also mapped to the conscientiosness value
+        GetComponentInParent<Agent>().PositionReachedDelay = Random.Range(_minWaitInterval / (Conscientiousness * 10), _maxWaitInterval / (Conscientiousness * 10)); //also mapped to the conscientiosness value
         //example min=5 conscientiosness = 0.2 (*10) = we get 5 / 2 = 2.5 seconds 
     }
 
@@ -55,7 +55,7 @@ public class Traits : MonoBehaviour
     {
         Agent tempAgent = GetComponentInParent<Agent>();
 
-        for (int i = 0; i < Openess * 10; i++) //Openess tells the amount of shuffles
+        for (int i = 0; i < Openness * 10; i++) //Openess tells the amount of shuffles
         {
             int rand1 = Random.Range(currentWaypointIndex, tempAgent.OrderOfTravelPoints.Count);
             int rand2 = Random.Range(currentWaypointIndex, tempAgent.OrderOfTravelPoints.Count);

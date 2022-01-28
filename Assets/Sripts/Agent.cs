@@ -13,7 +13,6 @@ public class Agent : MonoBehaviour
 
     Collider _agentCollider;
     NavMeshAgent _agent;
-    NavMeshObstacle _agentObstacle;
     bool _movesManually;
     int _currentTravelPointIndex=0;
     float _positionReachedDelay = 0f;
@@ -22,6 +21,10 @@ public class Agent : MonoBehaviour
     float _remainingDistanceOffset = 1.0f;
     private bool _isGoingToCheckout = false;
     private string _dataFileName;
+
+    //Agreeableness movement speed increase
+    [SerializeField]
+    float _movementSpeedIncrease;
 
     //Animator
     Animator _animController;
@@ -33,7 +36,6 @@ public class Agent : MonoBehaviour
 
     private List<Transform> _orderOfTravelPoints = new List<Transform>();
     private List<Transform> _registerTravelPoints = new List<Transform>();
-    private List<GameObject> _neighbors = new List<GameObject>();
     public Collider AgentCollider { get { return _agentCollider; } }
     public string DataFileName { get { return _dataFileName; } set { _dataFileName = value; } }
     public float PositionReachedDelay { get { return _positionReachedDelay; } set { _positionReachedDelay = value; } }
@@ -45,7 +47,6 @@ public class Agent : MonoBehaviour
         } 
     }
     public List<Transform> RegisterTravelPoints { get { return _registerTravelPoints; } set { _registerTravelPoints = value; } }
-    public List<GameObject> Neighbors { get { return _neighbors; } set { _neighbors = value; } }
 
     public bool IsGoingToCheckout { get { return _isGoingToCheckout; } }
     public bool IsAgentOnWaypoint { get { return _isAgentOnWaypoint; } }
@@ -63,12 +64,10 @@ public class Agent : MonoBehaviour
         
         
         GetComponent<NavMeshAgent>().obstacleAvoidanceType = ObstacleAvoidanceType.GoodQualityObstacleAvoidance;
-        _agentObstacle = GetComponent<NavMeshObstacle>();
 
         //trigger walking animation
         _animController.SetBool("IsMoving", true);
 
-        _agentObstacle.enabled = false;
     }
     public void MoveToPoint(Vector3 destination)
     {
@@ -158,13 +157,29 @@ public class Agent : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other) //use OnTriggerEnter for now to detect neighbours for Agreeableness calculation, this is not good for performance !
+    {
+        //if (other.transform.tag == "Agent")
+        //{
+        //    if(other.GetComponent<Agent>()._emotionalTraits.Agreeableness <= _emotionalTraits.Agreeableness) //other agent doesn't care so tries to move faster to surpass the other agent
+        //    {
+        //        other.GetComponent<NavMeshAgent>().speed += _movementSpeedIncrease / 2;
+        //        transform.GetComponent<NavMeshAgent>().speed -= _movementSpeedIncrease / 4;
+        //    }
+        //    else //this agent cares less than the agent he crossed
+        //    {
+        //        transform.GetComponent<NavMeshAgent>().speed += _movementSpeedIncrease / 4;
+        //        other.GetComponent<NavMeshAgent>().speed -= _movementSpeedIncrease / 2;
+        //    }
+        //}
+    }
     void WriteDataToFile(string fileName)
     { 
         string path = Application.dataPath + "/Data/" + fileName + ".csv";
 
         TextWriter tw = new StreamWriter(path, true);
-        tw.WriteLine(_emotionalTraits.Extraversion.ToString() + ";" + _emotionalTraits.Openess + ";"
-        + _emotionalTraits.Conscientiosness + ";" + _emotionalTraits.Agreeableness + ";" + _emotionalTraits.Neuroticism + ";" + _totalTraverseTimer.ToString("0.00") + ";" + (_orderOfTravelPoints.Count-1));
+        tw.WriteLine(_emotionalTraits.Extraversion.ToString() + ";" + _emotionalTraits.Openness + ";"
+        + _emotionalTraits.Conscientiousness + ";" + _emotionalTraits.Agreeableness + ";" + _emotionalTraits.Neuroticism + ";" + _totalTraverseTimer.ToString("0.00") + ";" + (_orderOfTravelPoints.Count-1));
         tw.Close();
 
     }

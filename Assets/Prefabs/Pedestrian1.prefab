@@ -2364,6 +2364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 639614c6e98a8a94ea286ebe90f0f2c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _movementSpeedIncrease: 0
 --- !u!114 &5109700494438411363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2376,10 +2377,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 312277603b70ad744a37b007996a3ad6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Extraversion: 0.239
-  Openess: 0.678
-  Conscientiosness: 0.122
-  Agreeableness: 0
+  Extraversion: 0.245
+  Openness: 0.262
+  Conscientiousness: 0.331
+  Agreeableness: 0.143
   Neuroticism: 0.741
   _minWaitInterval: 2
   _maxWaitInterval: 4

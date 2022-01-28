@@ -11,6 +11,8 @@ public class Crowd : MonoBehaviour
     GameObject[] _agentPrefabs;
     [SerializeField]
     int _amountOfAgentsOnPoint;
+    [SerializeField]
+    private bool _useWaypointShifting;
 
 
     //Timers
@@ -59,16 +61,24 @@ public class Crowd : MonoBehaviour
             string path = Application.dataPath + "/Data/" + _dataFileNames[i] + ".csv";
 
             TextWriter tw = new StreamWriter(path, false);
-            tw.WriteLine("Extraversion; Openess; Conscientiosness; Agreeableness; Neuroticism; Traverse Time; #waypoints");
+            tw.WriteLine("Extraversion; Openness; Conscientiousness; Agreeableness; Neuroticism; Traverse Time; #waypoints");
             tw.Close();
         }
+
+        //assign random order to the waypoints at the beginning of the simulation
+        _availableWaypoints = GetRandomTraverseOrder();
     }
     void SpawnAgent()
     {
         int randAgentPrefabIndex = Random.Range(0, _agentPrefabs.Length);
 
         GameObject tempAgent = Instantiate(_agentPrefabs[randAgentPrefabIndex], _spawnPoints[Random.Range(0, _spawnPoints.Length)].position, Quaternion.identity);
-        tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder();
+
+        if(_useWaypointShifting)
+            tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetShiftedTraverseList();  //shift _available waypoint list before assigning
+        else
+            tempAgent.GetComponent<Agent>().OrderOfTravelPoints = GetRandomTraverseOrder(); //this is fully randomized to create a chaotic simulation but for statistics I need better consistent data
+        
         tempAgent.GetComponent<Agent>().RegisterTravelPoints = _availableRegisters;
         tempAgent.GetComponent<Agent>().DataFileName = _dataFileNames[randAgentPrefabIndex];
 
@@ -94,6 +104,27 @@ public class Crowd : MonoBehaviour
 
         return returnList;
     }
+    List<Transform> GetShiftedTraverseList()
+    {
+        List<Transform> tempList = _availableWaypoints;
+        //for every agent spawned shift the traverse list by 1 to the left so the results stay as close as possible to each other
+        //every second waypoint becomes the first in the next agent's list
+        for(int i =_availableWaypoints.Count; i<0 ;--i)
+        {
+            if (i == 0) //we are at the end swap first with last
+            {
+                tempList[0] = _availableWaypoints[_availableWaypoints.Count - 1];
+                tempList[tempList.Count - 1] = _availableWaypoints[0];
+            }
+            else
+            {
+                tempList[i] = _availableWaypoints[i - 1];
+                tempList[i - 1] = _availableWaypoints[i];
+            }
+        }
+
+        return tempList;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -118,14 +149,12 @@ public class Crowd : MonoBehaviour
             {
                 if (Vector2.Distance(_crowd[i].transform.position, _crowd[j].transform.position) < _neighbourDetectionRadius) //agent is in range add to neighbors
                 {
-                    _crowd[i].GetComponent<Agent>().Neighbors.Add(_crowd[j]);
                     //Debug.LogWarning("Added neighbor for agent - " + i);
                 }
                 else
                 {
                     if(_crowd.Contains(_crowd[j])) //this part f the code might not be that performant ??
                     {
-                        _crowd[i].GetComponent<Agent>().Neighbors.Remove(_crowd[j]);
                         //Debug.LogWarning("Removed neighbor for agent - " + i);
                     }
                 }
